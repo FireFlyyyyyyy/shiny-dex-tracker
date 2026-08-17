@@ -15,8 +15,12 @@ const prisma = new PrismaClient();
 const POKEAPI_BASE = "https://pokeapi.co/api/v2";
 // jsDelivr met en cache les mêmes fichiers que raw.githubusercontent.com,
 // avec une meilleure disponibilité (raw.githubusercontent.com renvoie parfois
-// des 503 sous charge).
+// des 503 sous charge) — mais uniquement pour les sprites pixel-art classiques.
 const SPRITES_BASE = "https://cdn.jsdelivr.net/gh/PokeAPI/sprites/sprites/pokemon";
+// Les rendus "Home" (3D) sont stockés via Git LFS dans ce dépôt : jsDelivr ne
+// sait pas les servir (403), il faut rester sur raw.githubusercontent.com qui
+// résout le LFS nativement.
+const HOME_SPRITES_BASE = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon";
 const GENERATION_COUNT = 9;
 const BATCH_SIZE = 20;
 
@@ -93,8 +97,8 @@ async function seedGeneration(generationId: number) {
             generation: generationId,
             spriteUrl: `${SPRITES_BASE}/${id}.png`,
             shinySpriteUrl: `${SPRITES_BASE}/shiny/${id}.png`,
-            homeSpriteUrl: `${SPRITES_BASE}/other/home/${id}.png`,
-            homeShinySpriteUrl: `${SPRITES_BASE}/other/home/shiny/${id}.png`,
+            homeSpriteUrl: `${HOME_SPRITES_BASE}/other/home/${id}.png`,
+            homeShinySpriteUrl: `${HOME_SPRITES_BASE}/other/home/shiny/${id}.png`,
             evolutionChainId: species.evolutionChainId,
             types,
           };
