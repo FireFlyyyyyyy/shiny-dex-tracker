@@ -4,7 +4,14 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        // Sprites Pokémon (normaux + shiny), servis par le CDN officiel de PokeAPI
+        // Sprites Pokémon (normaux + shiny) via jsDelivr, qui met en cache
+        // le repo GitHub PokeAPI/sprites avec une meilleure disponibilité.
+        protocol: "https",
+        hostname: "cdn.jsdelivr.net",
+      },
+      {
+        // Ancienne source, gardée en repli si des URLs pré-existantes
+        // n'ont pas été migrées.
         protocol: "https",
         hostname: "raw.githubusercontent.com",
       },

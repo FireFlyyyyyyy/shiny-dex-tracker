@@ -13,7 +13,10 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const POKEAPI_BASE = "https://pokeapi.co/api/v2";
-const SPRITES_BASE = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon";
+// jsDelivr met en cache les mêmes fichiers que raw.githubusercontent.com,
+// avec une meilleure disponibilité (raw.githubusercontent.com renvoie parfois
+// des 503 sous charge).
+const SPRITES_BASE = "https://cdn.jsdelivr.net/gh/PokeAPI/sprites/sprites/pokemon";
 const GENERATION_COUNT = 9;
 const BATCH_SIZE = 20;
 
