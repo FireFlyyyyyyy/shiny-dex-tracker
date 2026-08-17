@@ -1,0 +1,77 @@
+// Schéma de base de données du Pokémon Shiny Hunt Tracker.
+//
+// PostgreSQL (hébergé, ex. Neon) — utilisé en dev comme en production, via
+// DATABASE_URL dans .env. Pas de SQLite local : le site est déployé sur un
+// hébergeur serverless (Vercel), qui n'a pas de système de fichiers persistant.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String   @id @default(cuid())
+  email          String?  @unique // optionnel — la connexion se fait par pseudo, pas par email
+  hashedPassword String
+  pseudo         String   @unique // sert aussi de slug pour la page publique /u/[pseudo]
+  createdAt      DateTime @default(now())
+
+  shinyCatches      ShinyCatch[]
+  huntedGenerations HuntedGeneration[]
+}
+
+model Pokemon {
+  id             Int     @id // numéro de Pokédex national, source de vérité PokeAPI
+  name           String // nom anglais, sert de repli si nameFr est absent
+  nameFr         String? // nom français officiel (PokeAPI /pokemon-species)
+  generation     Int // 1-9, correspond à generation.id sur PokeAPI
+  spriteUrl      String
+  shinySpriteUrl String
+  // Rendus 3D "Home" (mêmes que Pokémon HOME), en option d'affichage à côté
+  // du sprite pixel-art classique — voir SpriteStyleProvider.
+  homeSpriteUrl      String?
+  homeShinySpriteUrl String?
+  // Regroupe les Pokémon d'une même ligne d'évolution (PokeAPI evolution-chain id),
+  // pour afficher "la famille" dans la fiche capture.
+  evolutionChainId Int?
+  types            String // types séparés par une virgule, ex. "Fire,Flying" — SQLite n'a pas de type liste natif
+
+  shinyCatches ShinyCatch[]
+
+  @@index([generation])
+  @@index([evolutionChainId])
+}
+
+model ShinyCatch {
+  id       String   @id @default(cuid())
+  caughtAt DateTime @default(now())
+
+  // Détails optionnels, affichés sur la fiche capture (privée et publique)
+  game   String? // ex. "Pokémon Écarlate"
+  method String? // ex. "Chaîne de captures (Poké Radar)"
+  resets Int? // nombre de resets/rencontres, si le joueur veut le noter
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  pokemonId Int
+  pokemon   Pokemon @relation(fields: [pokemonId], references: [id])
+
+  @@unique([userId, pokemonId])
+  @@index([userId])
+}
+
+model HuntedGeneration {
+  id           String @id @default(cuid())
+  generationId Int // correspond à generation.id sur PokeAPI, pas de FK (métadonnées statiques, pas en base)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, generationId])
+  @@index([userId])
+}

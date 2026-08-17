@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-base-900 text-cream font-body antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display tracking-wide;
+  }
+}
+
+@layer components {
+  /* Une "page" de carnet — kraft clair, texte encre, coins peu arrondis */
+  .card {
+    @apply bg-kraft text-kraft-ink border border-kraft-border rounded-lg shadow-card;
+  }
+
+  .card-hover {
+    @apply transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-glow;
+  }
+
+  /* Lignes de cahier discrètes, réservées aux grandes surfaces de contenu */
+  .page-lines {
+    background-image: repeating-linear-gradient(
+      180deg,
+      transparent 0px,
+      transparent 27px,
+      rgba(43, 42, 32, 0.07) 27px,
+      rgba(43, 42, 32, 0.07) 28px
+    );
+  }
+}
+
+/* Scrollbar custom */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #1e2818;
+}
+::-webkit-scrollbar-thumb {
+  background: #465438;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #1f5c52;
+}
